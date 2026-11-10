@@ -31,6 +31,7 @@ import { canAccess } from "./permissions.js";
 
 const initialMenu = [
   {
+    image: "/images/posta-cartagenera.jpg",
     id: 1,
     name: "Posta cartagenera",
     category: "Platos fuertes",
@@ -41,6 +42,7 @@ const initialMenu = [
     tag: "Favorito",
   },
   {
+    image: "/images/robalo-del-caribe.jpg",
     id: 2,
     name: "Róbalo del Caribe",
     category: "Platos fuertes",
@@ -51,6 +53,7 @@ const initialMenu = [
     tag: "Del mar",
   },
   {
+    image: "/images/arroz-mariscos.jpg",
     id: 3,
     name: "Arroz de mariscos",
     category: "Platos fuertes",
@@ -61,16 +64,17 @@ const initialMenu = [
     tag: "Del mar",
   },
   {
+    image: "/images/ceviche-camaron.jpg",
     id: 4,
-    name: "Ceviche de corozo",
+    name: "Ceviche de camaron",
     category: "Entradas",
-    description:
-      "Pesca blanca, leche de tigre de corozo, cebolla morada y crocante de yuca.",
+    description: "Ceviche tradicional de camaron.",
     price: 38000,
     available: true,
     tag: "De autor",
   },
   {
+    image: "/images/carimanolas.jpg",
     id: 5,
     name: "Carimañolas de la casa",
     category: "Entradas",
@@ -80,6 +84,7 @@ const initialMenu = [
     tag: "",
   },
   {
+    image: "/images/enyucado.jpg",
     id: 6,
     name: "Enyucado tibio",
     category: "Postres",
@@ -89,15 +94,17 @@ const initialMenu = [
     tag: "Tradición",
   },
   {
+    image: "/images/coctelf.jpg",
     id: 7,
-    name: "Brisa de corozo",
+    name: "Coctel",
     category: "Cócteles",
-    description: "Corozo, cítricos, hierbabuena y destilado de caña.",
+    description: "Cítricos, hierbabuena y destilado de caña.",
     price: 36000,
     available: true,
     tag: "De autor",
   },
   {
+    image: "/images/limonadacoco.jpg",
     id: 8,
     name: "Limonada de coco",
     category: "Bebidas",
@@ -197,7 +204,18 @@ const load = (key, fallback) => {
 export default function App() {
   const [page, setPage] = useState("Inicio");
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [menu, setMenu] = useState(() => load("jaslaw-menu", initialMenu));
+  const [menu, setMenu] = useState(() => {
+    const savedMenu = load("jaslaw-menu", initialMenu);
+
+    return savedMenu.map((dish) => {
+      const defaultDish = initialMenu.find((item) => item.id === dish.id);
+
+      return {
+        ...dish,
+        image: dish.image ?? defaultDish?.image,
+      };
+    });
+  });
   const [orders, setOrders] = useState(() =>
     load("jaslaw-orders", initialOrders),
   );
@@ -610,15 +628,28 @@ export default function App() {
                     className={`dish-card ${!d.available ? "unavailable" : ""}`}
                     key={d.id}
                   >
-                    <div className={`dish-art art-${d.id % 4}`}>
+                    <div
+                      className={`dish-art art-${d.id % 4} ${d.image ? "has-photo" : ""}`}
+                    >
                       <span>{d.category}</span>
-                      <div className="dish-monogram">
-                        {d.name
-                          .split(" ")
-                          .map((w) => w[0])
-                          .slice(0, 2)
-                          .join("")}
-                      </div>
+
+                      {d.image ? (
+                        <img
+                          className="dish-photo"
+                          src={d.image}
+                          alt={d.name}
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="dish-monogram">
+                          {d.name
+                            .split(" ")
+                            .map((word) => word[0])
+                            .slice(0, 2)
+                            .join("")}
+                        </div>
+                      )}
+
                       {d.tag && <label>{d.tag}</label>}
                     </div>
                     <div className="dish-body">
