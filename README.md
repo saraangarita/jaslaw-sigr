@@ -54,3 +54,8 @@ Reservas: registro y consulta de solicitudes; los estados se usan para demostrar
 Caja y reportes: resúmenes e indicadores con información de demostración.
 Datos y limitaciones
 El prototipo utiliza registros de ejemplo y datos guardados localmente. No cuenta con backend, base de datos relacional, autenticación real, pagos, facturación electrónica ni actualización entre varios usuarios o dispositivos. La estructura de datos que podría utilizarse en una futura base de datos deberá tratarse como una propuesta, no como una base ya implementada.
+
+## Licencia
+
+Este proyecto se distribuye bajo los términos de la licencia MIT. Consulta
+`LICENSE.txt` para ver el texto completo.
