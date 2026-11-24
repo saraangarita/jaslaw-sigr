@@ -1,3 +1,4 @@
+name: CI/CD · Jaslaw
 # Pipeline de integración y entrega continua del sistema de gestión
 # de pedidos y reservas del restaurante Jaslaw.
 # Rama main: pipeline completo con despliegue a staging.
