@@ -1,3 +1,9 @@
 node_modules/
 dist/
+coverage/
+*.log
 .DS_Store
+.env
+
+# Las evidencias del pipeline sí se versionan
+!docs/evidencias/*.log

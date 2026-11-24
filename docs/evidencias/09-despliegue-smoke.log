@@ -1,0 +1,11 @@
+$ (servidor estático sirviendo dist/ en :4173)
+$ curl -o /dev/null -w 'HTTP %{http_code} · %{size_download} bytes · %{time_total}s' http://127.0.0.1:4173/
+HTTP 200 · 944 bytes · 0.003985s
+
+$ curl -s http://127.0.0.1:4173/ | grep -o '<title>.*</title>'
+<title>Jaslaw · Cocina cartagenera de autor</title>
+
+$ verificación de assets del artefacto desplegado:
+assets/index-CSgk1Asn.css → HTTP 200 · 15653 bytes
+assets/index-DIk0NPcA.js → HTTP 200 · 188866 bytes
+images/posta-cartagenera.jpg → HTTP 200 · 92222 bytes

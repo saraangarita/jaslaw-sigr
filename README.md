@@ -1,61 +1,54 @@
-# Jaslaw — Sistema Integral de Gestión de Restaurante
+# Jaslaw · Cocina cartagenera de autor
 
-Jaslaw es un prototipo web académico para apoyar la gestión operativa de un restaurante de cocina cartagenera. La interfaz presenta una carta de platos y bebidas, pedidos, reservas, caja y reportes. El proyecto se desarrolla como parte de la actividad AA2 de la Unidad 2— Gestión de la configuración, de la asignatura Gestión del Software, actividad educativa y de aprendizaje.
+Prototipo académico del **sistema de gestión de pedidos y reservas** del restaurante Jaslaw
+(Cartagena de Indias): autenticación simulada por roles, menú digital, pedidos, reservas,
+caja y reportes.
 
-## Alcance del prototipo
+## Módulos del sistema
 
-El sistema incluye vistas de demostración para los perfiles de administrador, mesero y cliente. El administrador tiene acceso a la vista general y a las opciones de gestión; el mesero cuenta con una vista operativa de pedidos y reservas; el cliente puede consultar la carta y sus solicitudes de reserva.
+| Módulo | Descripción |
+| --- | --- |
+| Autenticación por roles | Perfiles de demostración: Administrador, Mesero, Cliente (`src/permissions.js`) |
+| Menú digital | Carta con categorías, precios, disponibilidad y administración de productos |
+| Pedidos | Comanda, cantidades, totales y flujo de estados (Recibido → Entregado) |
+| Reservas | Registro, validación de fecha/hora/personas y cambios de estado |
+| Caja y reportes | Corte demostrativo, exportación CSV e indicadores |
 
-La selección de perfil y la diferenciación de vistas se realizan en la interfaz. No constituyen autenticación ni seguridad de producción. Algunas acciones se conservan como demostración y deben validarse en el navegador según el perfil seleccionado.
-
-Los datos se almacenan en el `localStorage` del navegador. Por ello, no se sincronizan entre dispositivos ni representan una base de datos centralizada. Los indicadores de caja y reportes son de demostración. El prototipo no procesa pagos ni genera facturas electrónicas.
-
-## Tecnologías
-
-- React y JavaScript
-- HTML y CSS
-- Vite para desarrollo y compilación
-- `lucide-react` para iconos
-- Git para control de versiones
-- GitHub como repositorio remoto
-
-## Requisitos
-
-- Node.js y npm instalados
-- Git, para trabajar con el repositorio
-
-## Instalación y ejecución local
-
-Clona el repositorio y entra en la carpeta del proyecto:
+## Ejecución local
 
 ```bash
-git clone https://github.com/saraangarita/jaslaw-sigr.git
-cd jaslaw-sigr
+npm ci          # instalar dependencias de forma reproducible
+npm run dev     # servidor de desarrollo en http://localhost:5173
+npm run build   # compilar a dist/
+npm run preview # servir el artefacto compilado
 ```
 
-Estructura principal
-jaslaw-sigr/
-├── public/
-│ └── images/ # Imágenes utilizadas en la carta
-├── src/
-│ ├── App.jsx # Interfaz, módulos y flujo del prototipo
-│ ├── main.jsx # Punto de entrada de React
-│ ├── permissions.js
-│ └── styles.css # Estilos y adaptación responsive
-├── index.html
-├── package.json
-└── vite.config.js
+## Calidad y CI/CD
 
-Módulos incluidos
-Usuarios y perfiles: cambio entre perfiles de demostración.
-Menú: consulta de platos y categorías; incluye acciones de administración en la interfaz.
-Pedidos: creación y seguimiento de pedidos de demostración.
-Reservas: registro y consulta de solicitudes; los estados se usan para demostrar el flujo de atención.
-Caja y reportes: resúmenes e indicadores con información de demostración.
-Datos y limitaciones
-El prototipo utiliza registros de ejemplo y datos guardados localmente. No cuenta con backend, base de datos relacional, autenticación real, pagos, facturación electrónica ni actualización entre varios usuarios o dispositivos. La estructura de datos que podría utilizarse en una futura base de datos deberá tratarse como una propuesta, no como una base ya implementada.
+```bash
+npm run lint           # análisis estático (ESLint)
+npm run test           # 36 pruebas unitarias (Vitest)
+npm run test:coverage  # pruebas + cobertura con umbral mínimo de 80 %
+npm run audit:ci        # auditoría de dependencias de producción
+npm run check:bundle   # presupuesto de rendimiento del bundle
+bash scripts/pipeline-local.sh   # reproduce el pipeline completo en local
+```
 
-## Licencia
+El pipeline se ejecuta en **GitHub Actions** (`.github/workflows/ci-cd.yml`) y su equivalente
+en **Jenkins** (`Jenkinsfile`). Etapas: lint → pruebas → seguridad → build → imagen Docker →
+despliegue a staging → aprobación a producción.
 
-Este proyecto se distribuye bajo los términos de la licencia MIT. Consulta
-`LICENSE.txt` para ver el texto completo.
+## Estructura
+
+```
+src/
+  App.jsx            # interfaz completa del sistema (roles, módulos y modales)
+  main.jsx           # punto de entrada
+  styles.css         # identidad visual (marfil, carbón, petróleo, latón)
+  permissions.js     # control de acceso por rol
+  logic/             # lógica de dominio pura y testeable
+  __tests__/         # pruebas unitarias
+```
+
+> **Nota académica.** Los datos son de demostración y se guardan en `localStorage`.
+> No hay backend, pagos reales ni facturación electrónica.

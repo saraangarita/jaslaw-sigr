@@ -1,0 +1,32 @@
+$ npx vitest run src/__tests__/demo-fallo.test.js
+
+ RUN  v2.1.9 /home/user/jaslaw
+
+ ❯ src/__tests__/demo-fallo.test.js (1 test | 1 failed) 8ms
+   × simulación de fallo en el pipeline > asume que un pedido Listo puede volver a Recibido 7ms
+     → expected 'Entregado' to be 'Recibido' // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/demo-fallo.test.js > simulación de fallo en el pipeline > asume que un pedido Listo puede volver a Recibido
+AssertionError: expected 'Entregado' to be 'Recibido' // Object.is equality
+
+Expected: "Recibido"
+Received: "Entregado"
+
+ ❯ src/__tests__/demo-fallo.test.js:7:33
+      5| describe("simulación de fallo en el pipeline", () => {
+      6|   it("asume que un pedido Listo puede volver a Recibido", () => {
+      7|     expect(nextStatus("Listo")).toBe("Recibido");
+       |                                 ^
+      8|   });
+      9| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  03:00:31
+   Duration  211ms (transform 25ms, setup 0ms, collect 17ms, tests 8ms, environment 0ms, prepare 55ms)
+
+[exit code: 1]

@@ -1,0 +1,34 @@
+$ npm run test:coverage
+
+> jaslaw@1.0.0 test:coverage
+> vitest run --coverage
+
+
+ RUN  v3.2.7 /home/user/jaslaw
+      Coverage enabled with v8
+
+ ✓ src/__tests__/bookings.test.js (9 tests) 8ms
+ ✓ src/__tests__/orders.test.js (9 tests) 7ms
+ ✓ src/__tests__/cart.test.js (7 tests) 22ms
+ ✓ src/__tests__/menu.test.js (6 tests) 20ms
+ ✓ src/__tests__/permissions.test.js (5 tests) 6ms
+
+ Test Files  5 passed (5)
+      Tests  36 passed (36)
+   Start at  03:46:34
+   Duration  1.44s (transform 53ms, setup 0ms, collect 88ms, tests 64ms, environment 1ms, prepare 389ms)
+
+ % Coverage report from v8
+-----------------|---------|----------|---------|---------|-------------------
+File             | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-----------------|---------|----------|---------|---------|-------------------
+All files        |     100 |     90.9 |     100 |     100 |                   
+ src             |     100 |      100 |     100 |     100 |                   
+  permissions.js |     100 |      100 |     100 |     100 |                   
+ src/logic       |     100 |    90.47 |     100 |     100 |                   
+  bookings.js    |     100 |    92.59 |     100 |     100 | 9,55              
+  cart.js        |     100 |    84.21 |     100 |     100 | 7,14,23           
+  menu.js        |     100 |     92.3 |     100 |     100 | 19                
+  orders.js      |     100 |       92 |     100 |     100 | 36,56             
+-----------------|---------|----------|---------|---------|-------------------
+[exit code: 0]

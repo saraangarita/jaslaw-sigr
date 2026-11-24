@@ -1,0 +1,75 @@
+$ bash scripts/pipeline-local.sh
+============================================================
+ PIPELINE CI/CD · JASLAW · 2026-11-24 03:46:40
+ Commit: dcc8ccd
+ Node:   v20.20.2 · npm: 10.8.2
+============================================================
+
+[36m▶ ETAPA 1 · Dependencias (npm ci)[0m
+[32m✔ Dependencias (npm ci) superada en 5s[0m
+
+[36m▶ ETAPA 2 · Análisis estático (ESLint)[0m
+[32m✔ Análisis estático (ESLint) superada en 1s[0m
+
+[36m▶ ETAPA 3 · Pruebas unitarias + cobertura[0m
+
+ RUN  v3.2.7 /home/user/jaslaw
+      Coverage enabled with v8
+
+ ✓ src/__tests__/bookings.test.js (9 tests) 8ms
+ ✓ src/__tests__/orders.test.js (9 tests) 6ms
+ ✓ src/__tests__/cart.test.js (7 tests) 21ms
+ ✓ src/__tests__/menu.test.js (6 tests) 20ms
+ ✓ src/__tests__/permissions.test.js (5 tests) 5ms
+
+ Test Files  5 passed (5)
+      Tests  36 passed (36)
+   Start at  03:46:46
+   Duration  1.34s (transform 54ms, setup 0ms, collect 87ms, tests 60ms, environment 1ms, prepare 368ms)
+
+ % Coverage report from v8
+-----------------|---------|----------|---------|---------|-------------------
+File             | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-----------------|---------|----------|---------|---------|-------------------
+All files        |     100 |     90.9 |     100 |     100 |                   
+ src             |     100 |      100 |     100 |     100 |                   
+  permissions.js |     100 |      100 |     100 |     100 |                   
+ src/logic       |     100 |    90.47 |     100 |     100 |                   
+  bookings.js    |     100 |    92.59 |     100 |     100 | 9,55              
+  cart.js        |     100 |    84.21 |     100 |     100 | 7,14,23           
+  menu.js        |     100 |     92.3 |     100 |     100 | 19                
+  orders.js      |     100 |       92 |     100 |     100 | 36,56             
+-----------------|---------|----------|---------|---------|-------------------
+[32m✔ Pruebas unitarias + cobertura superada en 2s[0m
+
+[36m▶ ETAPA 4 · Auditoría de dependencias (prod)[0m
+found 0 vulnerabilities
+[32m✔ Auditoría de dependencias (prod) superada en 0s[0m
+[36m· Auditoría informativa de dependencias de desarrollo (no bloqueante)[0m
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+[36m▶ ETAPA 5 · Compilación (Vite build)[0m
+vite v5.4.21 building for production...
+transforming...
+✓ 1571 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.94 kB │ gzip:  0.49 kB
+dist/assets/index-5uAOiUk_.css   22.20 kB │ gzip:  5.69 kB
+dist/assets/index-f6jxbhI1.js   188.74 kB │ gzip: 57.19 kB
+✓ built in 2.61s
+[32m✔ Compilación (Vite build) superada en 3s[0m
+
+[36m▶ ETAPA 6 · Presupuesto de rendimiento[0m
+[perf] JS: 184.4 KB / límite 600.0 KB → OK
+[perf] CSS: 21.7 KB / límite 120.0 KB → OK
+[perf] Presupuesto de rendimiento cumplido.
+[32m✔ Presupuesto de rendimiento superada en 1s[0m
+
+============================================================
+[32mPipeline completado: 6 etapas en 13s[0m
+Artefacto generado: dist/  (940K)
+============================================================
+[exit code: 0]

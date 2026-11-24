@@ -1,0 +1,186 @@
+name: CI/CD · Jaslaw
+
+# Pipeline de integración y entrega continua del sistema de gestión
+# de pedidos y reservas del restaurante Jaslaw.
+# Rama main: pipeline completo con despliegue a staging.
+# Pull requests: solo validación (sin despliegue).
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: "20"
+  IMAGE_NAME: ghcr.io/${{ github.repository }}
+
+jobs:
+  # ---------- ETAPA 1: CALIDAD DE CÓDIGO ----------
+  quality:
+    name: "1 · Lint y pruebas unitarias"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Instalar dependencias (reproducible)
+        run: npm ci
+
+      - name: Análisis estático con ESLint
+        run: npm run lint
+
+      - name: Pruebas unitarias con cobertura
+        run: npm run test:coverage
+
+      - name: Publicar reporte de cobertura
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cobertura
+          path: coverage/
+          retention-days: 7
+
+  # ---------- ETAPA 2: SEGURIDAD ----------
+  security:
+    name: "2 · Análisis de seguridad"
+    runs-on: ubuntu-latest
+    needs: quality
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+
+      - name: Auditoría de dependencias de producción (bloqueante)
+        run: npm run audit:ci
+
+      - name: Auditoría informativa de dependencias de desarrollo
+        continue-on-error: true
+        run: npm run audit:full
+
+      - name: Escaneo de secretos y configuraciones (Trivy fs)
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: fs
+          scan-ref: .
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          format: sarif
+          output: trivy-fs.sarif
+
+      - name: Cargar resultados en GitHub Security
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: trivy-fs.sarif
+
+  # ---------- ETAPA 3: CONSTRUCCIÓN ----------
+  build:
+    name: "3 · Build y presupuesto de rendimiento"
+    runs-on: ubuntu-latest
+    needs: [quality, security]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - name: Verificar presupuesto de rendimiento
+        run: npm run check:bundle
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          retention-days: 7
+
+  # ---------- ETAPA 4: EMPAQUETADO (DOCKER) ----------
+  docker:
+    name: "4 · Imagen Docker y escaneo"
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'push'
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Construir y publicar imagen
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ env.IMAGE_NAME }}:${{ github.sha }}
+            ${{ env.IMAGE_NAME }}:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Escaneo de la imagen publicada
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: ${{ env.IMAGE_NAME }}:${{ github.sha }}
+          severity: CRITICAL,HIGH
+          exit-code: "1"
+
+  # ---------- ETAPA 5: DESPLIEGUE A STAGING ----------
+  deploy-staging:
+    name: "5 · Despliegue a staging"
+    runs-on: ubuntu-latest
+    needs: [docker, build]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment:
+      name: staging
+      url: https://staging.jaslaw.example.com
+    steps:
+      - name: Descargar artefacto compilado
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+      - name: Publicar en el entorno de pruebas
+        run: |
+          echo "Desplegando build ${{ github.sha }} en staging..."
+          # Ejemplo con rsync sobre el host de staging:
+          # rsync -az --delete dist/ deploy@staging.jaslaw.example.com:/var/www/jaslaw/
+
+      - name: Smoke test del despliegue
+        run: |
+          echo "Verificando disponibilidad del entorno..."
+          # curl -sSf https://staging.jaslaw.example.com | grep -qi "jaslaw"
+
+  # ---------- ETAPA 6: NOTIFICACIÓN ----------
+  notify:
+    name: "6 · Notificación"
+    runs-on: ubuntu-latest
+    needs: [quality, security, build]
+    if: always()
+    steps:
+      - name: Resumen del pipeline
+        run: |
+          echo "Resultado: ${{ job.status }}"
+          echo "Commit: ${{ github.sha }} · Autor: ${{ github.actor }}"

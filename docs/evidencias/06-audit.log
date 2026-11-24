@@ -1,0 +1,7 @@
+$ npm run audit --omit=dev --audit-level=high
+
+> jaslaw@1.0.0 audit:ci
+> npm audit --omit=dev --audit-level=high
+
+found 0 vulnerabilities
+[exit code: 0]

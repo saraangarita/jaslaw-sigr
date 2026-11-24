@@ -1,0 +1,9 @@
+$ npm run check:bundle
+
+> jaslaw@1.0.0 check:bundle
+> node scripts/check-bundle.mjs
+
+[perf] JS: 184.4 KB / límite 600.0 KB → OK
+[perf] CSS: 21.7 KB / límite 120.0 KB → OK
+[perf] Presupuesto de rendimiento cumplido.
+[exit code: 0]
